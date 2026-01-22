@@ -22,6 +22,7 @@
   zlib,
   fixDarwinDylibNames,
 
+  enableGL ? !stdenv.hostPlatform.isDarwin,
   enableVulkan ? !stdenv.hostPlatform.isDarwin,
 }:
 
@@ -66,10 +67,12 @@ stdenv.mkDerivation (finalAttrs: {
     freetype
     harfbuzzFull
     icu
-    libGL
     libjpeg
     libwebp
     libX11
+  ]
+  ++ lib.optionals enableGL [
+    libGL
   ]
   ++ lib.optionals enableVulkan [
     vulkan-headers
@@ -109,6 +112,10 @@ stdenv.mkDerivation (finalAttrs: {
     ]
     ++ lib.optionals enableVulkan [
       "skia_use_vulkan=true"
+    ]
+    ++ lib.optionals enableGL [
+      "skia_use_gl=true"
+      "skia_use_egl=true"
     ]
     ++ lib.optionals stdenv.hostPlatform.isDarwin [
       "skia_use_fontconfig=true"
